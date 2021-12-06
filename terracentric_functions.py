@@ -7,6 +7,7 @@ from astral.sun import sun
 from astral import LocationInfo
 
 import numpy as np
+import terracentric_config as c
 
 def get_pln_pos(timestamp, pln_array):
     # this returns planets location from planet_list @ timestamp in a numpy array as observed from earth
@@ -21,7 +22,7 @@ def get_pln_pos(timestamp, pln_array):
             print("halllllllllo", pln_coord.ra.value)
 
     pln_array[:, 1] = (pln_array[:, 1] - pln_array[0, 1]) % (2*np.pi)
-    return
+    return pln_array
 
 def calc_theta(timestamp):
     city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
@@ -30,47 +31,91 @@ def calc_theta(timestamp):
     noon = time.strptime(s["noon"].strftime("%H:%M:%S").split(',')[0], '%H:%M:%S')
     noontime = dt.timedelta(hours=noon.tm_hour, minutes=noon.tm_min, seconds=noon.tm_sec).total_seconds()
 
-    theta = 2*np.pi * (((-t + noontime)/86400)+1/4)
+    c.theta = 2*np.pi * (((-t + noontime)/86400)+1/4)
 
-    return theta
+    return c.theta
 
 def get_tm():
     st = datetime.utcnow()
-    tm = datetime.timestamp(st)
-    return tm
+    c.tm = datetime.timestamp(st)
+    return c.tm
 
-def get_led_state(disable_calc_theta, disable_get_pln_pos, timestamp, pln_array, led_array):
-    global theta_buffed
-    if disable_calc_theta == False:
-        theta = p.calculate_theta2(timestamp=timestamp)
-        theta_buffed = theta
+def refresh(r_tm, r_theta, r_pln_pos):
+    if r_tm == True:
+        c.tm = get_tm()
+    if r_theta == True:
+        c.theta = calc_theta(timestamp=c.tm)
+    if r_pln_pos == True:
+        get_pln_pos(timestamp=c.tm, pln_array=c.pln_array)
+
+def get_led_state():
+    s0 = s(0)
+    for led in c.led_array:
+        sum_led = np.array((0, 0, 0), dtype=float)
+        for pln in c.pln_array:
+            phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
+            phi_d_m = min(phi_d, 2 * np.pi - phi_d)
+
+            val = v(phi_d_m, s0)
+            #val = 0
+            sum_led += pln[3] * val
+
+        led[3] = sum_led
+        for ind in range(len(led[3])):
+            led[3][ind] = np.clip(led[3][ind], 0, 255)
+    return c.led_array
+
+def redraw_canvas(canv):
+
+    width = 800
+    height = 800
+    offx = width / 2
+    offy = height / 2
+    sc = 30
+    get_led_state()
+    canv.delete("all")
+    for led in c.led_array:
+        x, y = pol2cart(led[4], led[1])
+        create_circle((x * sc + offx), (-y * sc + offy), 8, canv, col=led[3])
+
+def cart2pol(x, y):
+    rho = np.sqrt(x**2 + y**2)
+    phi = np.arctan2(y, x)
+    return(rho, phi)
+
+def pol2cart(rho, phi):
+    x = rho * np.cos(phi)
+    y = rho * np.sin(phi)
+    return(x, y)
+
+def create_circle(x, y, r, canvasName, col): #center coordinates, radius
+    x0 = x - r
+    y0 = y - r
+    x1 = x + r
+    y1 = y + r
+    #print(int(col[0]), int(col[1]), int(col[2]))
+    return canvasName.create_oval(x0, y0, x1, y1, fill='#%02x%02x%02x' % (int(col[0]), int(col[1]), int(col[2])))
+
+def z(x):
+
+    #print("x, z", x, z)
+    return z
+
+def s(x):
+    z = 4 * abs(x / c.a) ** c.c - c.b
+    s = np.tanh(z)
+    return s
+
+def l(x, s0):
+    l = np.clip(((s(x)+s0)/2*s0), 0, 1)
+    return l
+
+def v(x, s0):
+
+    if x <= 0:
+        val = l(x-c.d, s0)
     else:
-        theta = theta_buffed
-    if disable_get_pln_pos == False:
-        p.get_pln_pos2(timestamp=timestamp, pln_array=pln_array)
-
-    if state[3] == False:
-        mode = "radial"
-    else:
-        mode = "xy"
-
-    if mode == "radial":
-        for led in led_array:
-            sum_led = np.array((0, 0, 0), dtype=float)
-            for pln in pln_array:
-                phi_d = ((pln[1] - led[1] + theta) % (2 * np.pi))
-                phi_d_m = min(phi_d, 2 * np.pi - phi_d)
-                if phi_d_m <= (cfg["f"]/360*2*np.pi):
-                    val = ((cfg["a"]*(phi_d_m + (pln[2] + led[2])*cfg["d"]) ** (cfg["b"])) / cfg["c"])
-                    val = np.float16(between(0, val, 1))
-                    sum_led += pln[3] * val
-
-            led[3] = sum_led
-            for ind in range(len(led[3])):
-                led[3][ind] = between(0, led[3][ind], 255)
-            if np.sum(led[3]) <= 3*cfg["e"]:
-                led[3] = np.array((0, 0, 0), dtype=float)
-
-    return
-
+        val = l(x+c.d, s0)
+        #print("val", val)
+    return val
 

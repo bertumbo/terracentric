@@ -1,5 +1,15 @@
 import numpy as np
 
+tm = 0
+theta = 0
+a = 0.1
+b = 2
+c = 1
+d = 0
+e = 0
+f = 360
+
+
 pln_array = np.array(
     [### pln        phi|phase |  g |  b |  a |
         ["sun",       0, 0, np.array((255, 212,  60))],
@@ -30,6 +40,8 @@ for m in range(m_LED):
         led_array[ind, 2] = 2*np.pi*(m/m_LED)
         led_array[ind, 3] = np.array((0,0,0))
         led_array[ind, 4] = key[m]
+
+
 
 print(pln_array)
 print(led_array)
