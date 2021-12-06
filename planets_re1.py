@@ -85,7 +85,7 @@ def get_pln_pos2(timestamp = time.time(), pln_array = np.array((1,1))):
     t = Time(datetime.datetime.fromtimestamp(timestamp), format="datetime")
     loc = EarthLocation.from_geodetic(lon=50 + 41 / 60, lat=10 + 55 / 60, height=450)
 
-    with solar_system_ephemeris.set('de432s'):  #'builtin' or 'de432s' or 'de430s'
+    with solar_system_ephemeris.set('builtin'):  #'builtin' or 'de432s' or 'de430s'
         for pln in pln_array:
             pln_coord = get_body(pln[0], t, loc)
             pln[1] = np.deg2rad(pln_coord.ra.value)
