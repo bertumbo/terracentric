@@ -20,17 +20,18 @@ pln_array = np.array(
         ["jupiter",   0, 0, np.array((212, 197, 157))],
         ["saturn",    0, 0, np.array((255,   0,   0))],
         ["uranus",    0, 0, np.array(( 81, 180, 255))],
-        ["neptune",   0, 0, np.array(( 43,  64, 255))]
+        ["neptune",   0, 0, np.array(( 43,  64, 255))],
+        #["notaplanet",0, 0, np.array(( 43,  64, 255))]
     ],
     dtype=object,
 )
 
 n_LED = 120
-m_LED = 4
+m_LED = 3
 
 led_array = np.zeros((n_LED*m_LED, 5), dtype=object)
 
-key = {0: 9.5, 1: 10, 2: 10.5, 3: 9.0}
+key = {0: 9.5, 1: 10, 2: 10.5}
     #### [led ,   phi, phase, (r, g, b), rho]
 for m in range(m_LED):
     for n in range(n_LED):

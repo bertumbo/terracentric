@@ -22,7 +22,7 @@ def get_pln_pos(timestamp, pln_array):
             print("halllllllllo", pln_coord.ra.value)
 
     pln_array[:, 1] = (pln_array[:, 1] - pln_array[0, 1]) % (2*np.pi)
-    return pln_array
+    return
 
 def calc_theta(timestamp):
     city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
@@ -33,18 +33,20 @@ def calc_theta(timestamp):
 
     c.theta = 2*np.pi * (((-t + noontime)/86400)+1/4)
 
-    return c.theta
+    return
 
 def get_tm():
     st = datetime.utcnow()
     c.tm = datetime.timestamp(st)
-    return c.tm
+    return
 
 def refresh(r_tm, r_theta, r_pln_pos):
     if r_tm == True:
-        c.tm = get_tm()
+        get_tm()
+        #c.tm = get_tm()
     if r_theta == True:
-        c.theta = calc_theta(timestamp=c.tm)
+        #c.theta = calc_theta(timestamp=c.tm)
+        calc_theta(timestamp=c.tm)
     if r_pln_pos == True:
         get_pln_pos(timestamp=c.tm, pln_array=c.pln_array)
 
@@ -56,14 +58,14 @@ def get_led_state():
             phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
             phi_d_m = min(phi_d, 2 * np.pi - phi_d)
 
-            val = v(phi_d_m, s0)
+            val = v(phi_d_m, led[2]*c.d,  s0)
             #val = 0
             sum_led += pln[3] * val
 
         led[3] = sum_led
         for ind in range(len(led[3])):
             led[3][ind] = np.clip(led[3][ind], 0, 255)
-    return c.led_array
+    return
 
 def redraw_canvas(canv):
 
@@ -110,12 +112,12 @@ def l(x, s0):
     l = np.clip(((s(x)+s0)/2*s0), 0, 1)
     return l
 
-def v(x, s0):
+def v(x, phase, s0):
 
     if x <= 0:
-        val = l(x-c.d, s0)
+        val = l(x-phase, s0)
     else:
-        val = l(x+c.d, s0)
+        val = l(x+phase, s0)
         #print("val", val)
     return val
 
