@@ -26,6 +26,13 @@ pln_array = np.array(
     dtype=object,
 )
 
+mrk_array = np.array(
+    [
+        ["sunrise", 0, 0, np.array((255,255,255))],
+        ["sunset", 0, 0, np.array((255,255,255))]
+    ]
+)
+
 n_LED = 120
 m_LED = 3
 
