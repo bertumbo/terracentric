@@ -150,7 +150,7 @@ pln_array = np.array(
 
 
 start = datetime.utcnow()
-timestamp = datetime.timestamp(start)#+60*60*10
+timestamp = datetime.timestamp(start)
 
 get_led_state(timestamp=timestamp, pln_array=pln_array, led_array=led_array)
 get_led_state(disable_get_pln_pos=True, timestamp=timestamp, pln_array=pln_array, led_array=led_array)
