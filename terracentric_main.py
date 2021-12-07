@@ -40,7 +40,7 @@ sld_c = tk.Scale(resolution=0.1,  from_=0, to=10, orient="vertical", length=500)
 sld_d = tk.Scale(resolution=0.001, from_=-0.1, to=1, orient="vertical", length=500)
 sld_e = tk.Scale(resolution=1, from_=0, to=255, orient="vertical", length=500)
 sld_f = tk.Scale(resolution=1, from_=0, to=360, orient="vertical", length=500)
-lng = Checkbar(window, ['r_tm', 'r_theta', 'r_pln_pos', 'realtime', 'xy'])
+lng = Checkbar(window, ['r_tm', 'r_theta', 'r_pln_pos', 'r_led', 'r_canv'])
 
 
 sld_a.set(str(c.a))
@@ -72,6 +72,7 @@ for led in c.led_array:
 frame = 0
 while True:
     if frame%1==0:
+        start = datetime.utcnow()
         state = list(lng.state())
         c.a = np.float16(sld_a.get())
         c.b = np.float16(sld_b.get())
@@ -83,13 +84,16 @@ while True:
         window.update_idletasks()
         window.update()
         f.refresh(state[0], state[1], state[2])
-        f.get_led_state()
-        f.redraw_canvas(canv)
+        if state[3]==True:
+            f.get_led_state()
+        if state[4]==True:
+            f.redraw_canvas(canv)
         #time_label.configure(text=str(frame))
         #print(state)
         #print(pln_array, led_array)
         time_label['text'] = str(datetime.fromtimestamp(c.tm))
         time_label2['text'] = str(c.tm)
-        print(state)
+        #print(state)
+        print(state, datetime.utcnow()-start)
     frame += 1
 

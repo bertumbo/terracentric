@@ -19,7 +19,7 @@ def get_pln_pos(timestamp, pln_array):
         for pln in pln_array:
             pln_coord = get_body(pln[0], t, loc)
             pln[1] = np.deg2rad(pln_coord.ra.value)
-            print("halllllllllo", pln_coord.ra.value)
+            #print("halllllllllo", pln_coord.ra.value)
 
     pln_array[:, 1] = (pln_array[:, 1] - pln_array[0, 1]) % (2*np.pi)
     return
@@ -58,9 +58,10 @@ def get_led_state():
             phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
             phi_d_m = min(phi_d, 2 * np.pi - phi_d)
 
-            val = v(phi_d_m, led[2]*c.d,  s0)
-            #val = 0
-            sum_led += pln[3] * val
+            if phi_d_m < c.a:
+                val = v(phi_d_m, led[2]*c.d,  s0)
+                #val = 0
+                sum_led += pln[3] * val
 
         led[3] = sum_led
         for ind in range(len(led[3])):
@@ -109,7 +110,9 @@ def s(x):
     return s
 
 def l(x, s0):
-    l = np.clip(((s(x)+s0)/2*s0), 0, 1)
+    z = 4 * abs(x / c.a) ** c.c - c.b
+    s = np.tanh(z)
+    l = np.clip(((s+s0)/2*s0), 0, 1)
     return l
 
 def v(x, phase, s0):
