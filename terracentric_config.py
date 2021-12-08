@@ -44,10 +44,11 @@ for m in range(m_LED):
     for n in range(n_LED):
         ind = n+m*n_LED
         led_array[ind, 0] = "LED" + str(ind).zfill(4)
-        led_array[ind, 1] = 2*np.pi*(n/n_LED)
-        led_array[ind, 2] = 2*np.pi*(m/m_LED)
-        led_array[ind, 3] = np.array((0,0,0))
-        led_array[ind, 4] = key[m]
+        led_array[ind, 1] = np.float32(2*np.pi*(n/n_LED))
+        led_array[ind, 2] = np.float32(1*(m/m_LED))
+        #led_array[ind, 2] = 2 * np.pi * (m / m_LED)
+        led_array[ind, 3] = np.array((0,0,0), dtype="float32")
+        led_array[ind, 4] = np.float32(key[m])
 
 
 

@@ -9,6 +9,23 @@ from astral import LocationInfo
 import numpy as np
 import terracentric_config as c
 
+def get_tm():
+    st = datetime.utcnow()
+    c.tm = datetime.timestamp(st)
+    return
+
+
+def calc_theta(timestamp):
+    city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
+    s = sun(city.observer, date=dt.date.fromtimestamp(timestamp))
+    t = timestamp % 86400
+    noon = time.strptime(s["noon"].strftime("%H:%M:%S").split(',')[0], '%H:%M:%S')
+    noontime = dt.timedelta(hours=noon.tm_hour, minutes=noon.tm_min, seconds=noon.tm_sec).total_seconds()
+
+    c.theta = 2*np.pi * (((-t + noontime)/86400)+1/4)
+
+    return
+
 def get_pln_pos(timestamp, pln_array):
     # this returns planets location from planet_list @ timestamp in a numpy array as observed from earth
 
@@ -24,48 +41,32 @@ def get_pln_pos(timestamp, pln_array):
     pln_array[:, 1] = (pln_array[:, 1] - pln_array[0, 1]) % (2*np.pi)
     return
 
-def calc_theta(timestamp):
-    city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
-    s = sun(city.observer, date=dt.date.fromtimestamp(timestamp))
-    t = timestamp % 86400
-    noon = time.strptime(s["noon"].strftime("%H:%M:%S").split(',')[0], '%H:%M:%S')
-    noontime = dt.timedelta(hours=noon.tm_hour, minutes=noon.tm_min, seconds=noon.tm_sec).total_seconds()
-
-    c.theta = 2*np.pi * (((-t + noontime)/86400)+1/4)
-
-    return
-
-def get_tm():
-    st = datetime.utcnow()
-    c.tm = datetime.timestamp(st)
-    return
 
 def refresh(r_tm, r_theta, r_pln_pos):
     if r_tm == True:
         get_tm()
-        #c.tm = get_tm()
     if r_theta == True:
-        #c.theta = calc_theta(timestamp=c.tm)
         calc_theta(timestamp=c.tm)
     if r_pln_pos == True:
         get_pln_pos(timestamp=c.tm, pln_array=c.pln_array)
 
 def get_led_state():
     s0 = s(0)
+    sum_led = np.array((0, 0, 0), dtype="float32")
+
     for led in c.led_array:
-        sum_led = np.array((0, 0, 0), dtype=float)
+        sum_led = sum_led*0
         for pln in c.pln_array:
             phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
             phi_d_m = min(phi_d, 2 * np.pi - phi_d)
 
             if phi_d_m < c.a:
-                val = v(phi_d_m, led[2]*c.d,  s0)
-                #val = 0
+                d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
+                val = v(phi_d_m, (led[2] * d_now), s0)
                 sum_led += pln[3] * val
 
-        led[3] = sum_led
-        for ind in range(len(led[3])):
-            led[3][ind] = np.clip(led[3][ind], 0, 255)
+        #led[3] = sum_led
+        led[3] = np.clip(sum_led, 0, 255)
     return
 
 def redraw_canvas(canv):
@@ -116,7 +117,6 @@ def l(x, s0):
     return l
 
 def v(x, phase, s0):
-
     if x <= 0:
         val = l(x-phase, s0)
     else:
