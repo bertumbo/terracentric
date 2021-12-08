@@ -1,3 +1,7 @@
+###terracentric
+###by bertumbo
+
+
 import terracentric_functions as f
 import terracentric_config as c
 import tkinter as tk

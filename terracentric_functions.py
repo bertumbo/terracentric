@@ -1,3 +1,6 @@
+###functions
+
+
 import time
 import datetime as dt
 from datetime import datetime
