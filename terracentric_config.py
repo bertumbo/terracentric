@@ -30,8 +30,9 @@ pln_array = np.array(
 
 mrk_array = np.array(
     [
-        ["sunrise", 0, 0, np.array((255,255,255))],
-        ["sunset", 0, 0, np.array((255,255,255))]
+        ["sunrise", 0, 0, np.array((50,0,0))],
+        ["sunset", 0, 0, np.array((0,0,50))],
+        ["noon", 0, 0, np.array((50,50,50))],
     ]
 )
 

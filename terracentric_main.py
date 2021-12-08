@@ -26,7 +26,7 @@ f.refresh(
     r_theta=True,
     r_pln_pos=True
 )
-f.get_led_state()
+f.get_led_state(True, True)
 
 window = tk.Tk()
 width = 800
@@ -46,7 +46,8 @@ sld_d = tk.Scale(resolution=0.001, from_=-2*np.pi, to=2*np.pi, orient="vertical"
 sld_e = tk.Scale(resolution=1, from_=0, to=255, orient="vertical", length=500)
 sld_f = tk.Scale(resolution=1, from_=0, to=360, orient="vertical", length=500)
 lng = Checkbar(window, ['r_tm', 'r_theta', 'r_pln_pos', 'r_led', 'r_canv'])
-
+lng2 = Checkbar(window, ['drw_pln', 'drw_mrk'])
+lng3 = Checkbar(window, ['use_realtime'])
 
 sld_a.set(str(c.a))
 sld_b.set(str(c.b))
@@ -56,6 +57,8 @@ sld_e.set(str(c.e))
 sld_f.set(str(c.f))
 
 lng.pack(side="top")
+lng2.pack(side="top")
+lng3.pack(side="top")
 time_label.pack(side="top")
 time_label2.pack(side="top")
 entry_tm.pack(side="top")
@@ -68,7 +71,7 @@ sld_d.pack(side="left")
 sld_e.pack(side="left")
 sld_f.pack(side="left")
 
-
+entry_tm.insert(0, str(datetime.utcfromtimestamp(c.tm)))
 
 for led in c.led_array:
     x, y = f.pol2cart(led[4], led[1])
@@ -79,6 +82,8 @@ while True:
     if frame%1==0:
         start = datetime.utcnow()
         state = list(lng.state())
+        state2 = list(lng2.state())
+        state3 = list(lng3.state())
         c.a = np.float16(sld_a.get())
         c.b = np.float16(sld_b.get())
         c.c = np.float16(sld_c.get())
@@ -89,8 +94,16 @@ while True:
         window.update_idletasks()
         window.update()
         f.refresh(state[0], state[1], state[2])
-        if state[3]==True:
-            f.get_led_state()
+        if state3[0] == False:
+            try:
+                c.tm = datetime.timestamp(
+                    datetime.fromisoformat(entry_tm.get())
+                )
+            except:
+                pass
+            #     f.get_tm()
+            #     entry_tm.insert(0, str(datetime.utcfromtimestamp(c.tm)))
+        f.get_led_state(state2[0], state2[1])
         if state[4]==True:
             f.redraw_canvas(canv)
         #time_label.configure(text=str(frame))
@@ -99,6 +112,6 @@ while True:
         time_label['text'] = str(datetime.fromtimestamp(c.tm))
         time_label2['text'] = str(c.tm)
         #print(state)
-        print(state, datetime.utcnow()-start)
+        print(state, state2, state3, datetime.utcnow()-start)
     frame += 1
 
