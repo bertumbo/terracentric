@@ -38,16 +38,21 @@ mrk_array = np.array(
 
 n_LED = 120
 m_LED = 3
+key = {0: 9.5, 1: 10, 2: 10.5}
+# n_LED = 8
+# m_LED = 1
+# key = {0: 1}
 
 led_array = np.zeros((n_LED*m_LED, 5), dtype=object)
 
-key = {0: 9.5, 1: 10, 2: 10.5}
+
     #### [led ,   phi, phase, (r, g, b), rho]
 for m in range(m_LED):
     for n in range(n_LED):
         ind = n+m*n_LED
         led_array[ind, 0] = "LED" + str(ind).zfill(4)
         led_array[ind, 1] = np.float32(2*np.pi*(n/n_LED))
+        #led_array[ind, 1] = np.float32(2*np.pi*((-n/n_LED)+1/4)%2*np.pi)
         led_array[ind, 2] = np.float32(1*(m/m_LED))
         #led_array[ind, 2] = 2 * np.pi * (m / m_LED)
         led_array[ind, 3] = np.array((0,0,0), dtype="float32")

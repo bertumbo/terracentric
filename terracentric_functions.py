@@ -12,10 +12,11 @@ from astral import LocationInfo
 import numpy as np
 import terracentric_config as c
 
+
 def get_sun_event(timestamp, event):
     city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
-    s = sun(city.observer, date=dt.date.fromtimestamp(timestamp))
-    event_time = time.strptime(s[event].strftime("%H:%M:%S").split(',')[0], '%H:%M:%S')
+    sn = sun(city.observer, date=dt.date.fromtimestamp(timestamp))
+    event_time = time.strptime(sn[event].strftime("%H:%M:%S").split(',')[0], '%H:%M:%S')
     event_time_seconds = dt.timedelta(
         hours=event_time.tm_hour,
         minutes=event_time.tm_min,
@@ -23,10 +24,12 @@ def get_sun_event(timestamp, event):
     ).total_seconds()
     return event_time_seconds
 
+
 def get_tm():
     st = datetime.utcnow()
     c.tm = datetime.timestamp(st)
     return
+
 
 def calc_theta(timestamp):
     # city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
@@ -40,6 +43,7 @@ def calc_theta(timestamp):
 
     return
 
+
 def get_pln_pos(timestamp, pln_array):
     # this returns planets location from planet_list @ timestamp in a numpy array as observed from earth
 
@@ -50,7 +54,7 @@ def get_pln_pos(timestamp, pln_array):
         for pln in pln_array:
             pln_coord = get_body(pln[0], t, loc)
             pln[1] = np.deg2rad(pln_coord.ra.value)
-            #print("halllllllllo", pln_coord.ra.value)
+            # print("halllllllllo", pln_coord.ra.value)
 
     pln_array[:, 1] = (pln_array[:, 1] - pln_array[0, 1]) % (2*np.pi)
     return
@@ -87,7 +91,7 @@ def get_led_state(drw_pln, drw_mrk):
                 phi_d_m = min(phi_d, 2 * np.pi - phi_d)
                 if phi_d_m < c.a:
                     d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
-                    val = v(phi_d_m, (led[2] * d_now), s0)
+                    val = v(phi_d_m, ((led[2]+pln[2]) * d_now), s0)
                     sum_led += pln[3] * val
 
         if drw_mrk == True:
@@ -96,7 +100,7 @@ def get_led_state(drw_pln, drw_mrk):
                 phi_d_m = min(phi_d, 2 * np.pi - phi_d)
                 if phi_d_m < c.a:
                     d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
-                    val = v(phi_d_m, (led[2] * d_now), s0)
+                    val = v(phi_d_m, ((led[2]+mrk[2]) * d_now), s0)
                     sum_led += mrk[3] * val
 
         #led[3] = sum_led
@@ -126,6 +130,15 @@ def pol2cart(rho, phi):
     y = rho * np.sin(phi)
     return(x, y)
 
+def ind2nm(ind, n_max):
+    (m, n) = divmod(ind, n_max)
+    return n, m
+
+def nm2ind(n, m, n_max):
+    ind = n+m*n_max
+    return ind
+
+
 def create_circle(x, y, r, canvasName, col): #center coordinates, radius
     x0 = x - r
     y0 = y - r
@@ -134,10 +147,10 @@ def create_circle(x, y, r, canvasName, col): #center coordinates, radius
     #print(int(col[0]), int(col[1]), int(col[2]))
     return canvasName.create_oval(x0, y0, x1, y1, fill='#%02x%02x%02x' % (int(col[0]), int(col[1]), int(col[2])))
 
-def z(x):
-
-    #print("x, z", x, z)
-    return z
+# def z(x):
+#
+#     #print("x, z", x, z)
+#     return z
 
 def s(x):
     z = 4 * abs(x / c.a) ** c.c - c.b
