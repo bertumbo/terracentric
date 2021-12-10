@@ -14,7 +14,8 @@ import terracentric_config as c
 
 
 def get_sun_event(timestamp, event):
-    city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
+    #city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)
+    city = LocationInfo(latitude=50 + 41 / 60, longitude=10 + 55 / 60)
     sn = sun(city.observer, date=dt.date.fromtimestamp(timestamp))
     event_time = time.strptime(sn[event].strftime("%H:%M:%S").split(',')[0], '%H:%M:%S')
     event_time_seconds = dt.timedelta(
@@ -81,6 +82,7 @@ def refresh(r_tm, r_theta, r_pln_pos):
 def get_led_state(drw_pln, drw_mrk):
     s0 = s(0)
     sum_led = np.array((0, 0, 0), dtype="float32")
+    # sum_led = np.array((0, 0, 0), dtype="int")
 
     for led in c.led_array:
         sum_led = sum_led*0
@@ -106,6 +108,19 @@ def get_led_state(drw_pln, drw_mrk):
         #led[3] = sum_led
         led[3] = np.clip(sum_led, 0, 255)
     return
+
+def led_limiter(led_array, lmt):
+    pwr_array = np.array((0,0,0), dtype="float32")
+    for led in led_array:
+        pwr_array += led[3]/255*0.02
+    pwr = np.sum(pwr_array)
+    if pwr > lmt:
+        fac = lmt/pwr
+        for led in led_array:
+            led[3] = led[3]*fac
+    else:
+        fac=1
+    return (pwr, fac)
 
 def redraw_canvas(canv):
 
@@ -165,9 +180,9 @@ def l(x, s0):
 
 def v(x, phase, s0):
     if x <= 0:
-        val = l(x-phase, s0)
+        val = c.e*l(x-phase, s0)
     else:
-        val = l(x+phase, s0)
+        val = c.e*l(x+phase, s0)
         #print("val", val)
     return val
 

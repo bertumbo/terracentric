@@ -94,13 +94,14 @@ plot.plotxy(
 entry_tm = tk.Entry()
 time_label = tk.Label(text="frame")
 time_label2 = tk.Label(text="time")
+pwr_label = tk.Label(text="pwr")
 canv = tk.Canvas(width=width, height=height, bg="#000000")
 canv2 = tk.Canvas(width=300, height=200, bg="#000000")
 sld_a = tk.Scale(resolution=0.01,  from_=0, to=2*np.pi, orient="vertical", length=500)
 sld_b = tk.Scale(resolution=0.1,  from_=0, to=5, orient="vertical", length=500)
 sld_c = tk.Scale(resolution=0.1,  from_=0, to=10, orient="vertical", length=500)
 sld_d = tk.Scale(resolution=0.001, from_=-2*np.pi, to=2*np.pi, orient="vertical", length=500)
-sld_e = tk.Scale(resolution=1, from_=0, to=255, orient="vertical", length=500)
+sld_e = tk.Scale(resolution=0.001, from_=0, to=1, orient="vertical", length=500)
 sld_f = tk.Scale(resolution=1, from_=0, to=360, orient="vertical", length=500)
 lng = Checkbar(window, ["r_tm", 'r_theta', 'r_pln_pos', 'r_canv'])
 lng2 = Checkbar(window, ['r_led', 'drw_pln', 'drw_mrk'])
@@ -134,12 +135,14 @@ p2.add(lng3)
 p2.add(time_label)
 p2.add(time_label2)
 p2.add(entry_tm)
+p2.add(pwr_label)
 #p2.add(canv2)
 #p2.add(wtf)
 p3.add(sld_a)
 p3.add(sld_b)
 p3.add(sld_c)
 p3.add(sld_d)
+p3.add(sld_e)
 
 entry_tm.insert(0, str(datetime.fromtimestamp(c.tm)))
 
@@ -164,6 +167,14 @@ for led in c.led_array:
 #     window.update()
 #     time.sleep(0.1)
 
+
+#mainloop-structure:
+#--read and refresh user-param
+#--refresh variables (tm, theta, pln_array, led_array)
+#--refresh led-state
+#--limit led intensity
+#--render leds
+
 frame = 0
 while True:
     if frame%1==0:
@@ -180,27 +191,24 @@ while True:
         #state = list(lng.state())
         window.update_idletasks()
         window.update()
+
         f.refresh(state[0], state[1], state[2])
-        if state2[0] == True:
-            f.get_led_state(state2[1], state2[2])
+
         if state3[0] == False:
             try:
                 c.tm = datetime.timestamp(
                     datetime.fromisoformat(entry_tm.get())
                 )
-            except:
-                pass
-            #     f.get_tm()
-            #     entry_tm.insert(0, str(datetime.utcfromtimestamp(c.tm)))
+            except: pass
 
-
+        if state2[0] == True:
+            f.get_led_state(state2[1], state2[2])
+        pwr_label['text'] = "pwr" + str((f.led_limiter(c.led_array, c.limit)))
         if state[3]==True:
             f.redraw_canvas(canv)
-        #time_label.configure(text=str(frame))
-        #print(state)
-        #print(pln_array, led_array)
         time_label['text'] = str(datetime.fromtimestamp(c.tm))
         time_label2['text'] = str(c.tm)
+        #pwr_label['text'] = "pwr"+str((f.led_limiter(c.led_array, c.limit)))
         #print(state)
         print(state, state2, state3, datetime.utcnow()-start)
     frame += 1

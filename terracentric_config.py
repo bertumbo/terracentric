@@ -4,12 +4,13 @@ import numpy as np
 
 tm = 0
 theta = 0
-a = 0.1
+a = 0.2
 b = 2
-c = 1
-d = 0
-e = 0
+c = 0.5
+d = -0.1
+e = 1
 f = 360
+limit = 5 #power limit in amps as for 20mA per color channel
 
 
 pln_array = np.array(
@@ -33,7 +34,8 @@ mrk_array = np.array(
         ["sunrise", 0, 0, np.array((50,0,0))],
         ["sunset", 0, 0, np.array((0,0,50))],
         ["noon", 0, 0, np.array((50,50,50))],
-    ]
+    ],
+    dtype=object
 )
 
 n_LED = 120
