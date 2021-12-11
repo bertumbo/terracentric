@@ -5,6 +5,7 @@
 
 import terracentric_functions as f
 import terracentric_config as c
+import terracentric_programs as p
 import tkinter as tk
 import numpy as np
 from datetime import datetime
@@ -13,6 +14,7 @@ import matplotlib
 from matplotlib.pyplot import Figure
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from random import randint
 
 class Checkbar(tk.Frame):
    def __init__(self, parent=None, picks=[], side='left', anchor='w'):
@@ -92,9 +94,9 @@ plot.plotxy(
 
 
 entry_tm = tk.Entry()
-time_label = tk.Label(text="frame")
-time_label2 = tk.Label(text="time")
-pwr_label = tk.Label(text="pwr")
+time_label = tk.Label(text="frame", height=3)
+#time_label2 = tk.Label(text="time")
+pwr_label = tk.Label(text="pwr", height=4)
 canv = tk.Canvas(width=width, height=height, bg="#000000")
 canv2 = tk.Canvas(width=300, height=200, bg="#000000")
 sld_a = tk.Scale(resolution=0.01,  from_=0, to=2*np.pi, orient="vertical", length=500)
@@ -103,7 +105,7 @@ sld_c = tk.Scale(resolution=0.1,  from_=0, to=10, orient="vertical", length=500)
 sld_d = tk.Scale(resolution=0.001, from_=-2*np.pi, to=2*np.pi, orient="vertical", length=500)
 sld_e = tk.Scale(resolution=0.001, from_=0, to=1, orient="vertical", length=500)
 sld_f = tk.Scale(resolution=1, from_=0, to=360, orient="vertical", length=500)
-lng = Checkbar(window, ["r_tm", 'r_theta', 'r_pln_pos', 'r_canv'])
+lng = Checkbar(window, ["r_tm", 'r_theta', 'r_pln_pos'])
 lng2 = Checkbar(window, ['r_led', 'drw_pln', 'drw_mrk'])
 lng3 = Checkbar(window, ['use_realtime'])
 
@@ -117,10 +119,11 @@ sld_f.set(str(c.f))
 #lng.pack(side="top")
 #lng2.pack(side="top")
 #lng3.pack(side="top")
-time_label.pack(side="top")
-time_label2.pack(side="top")
-entry_tm.pack(side="top")
+#time_label.pack(side="top", expand=1)
+#time_label2.pack(side="top")
+#entry_tm.pack(side="top")
 canv.pack(side="right")
+#pwr_label.pack(anchor="w")
 
 # sld_a.pack(side="left")
 # sld_b.pack(side="left")
@@ -133,9 +136,10 @@ p2.add(lng)
 p2.add(lng2)
 p2.add(lng3)
 p2.add(time_label)
-p2.add(time_label2)
+#p2.add(time_label2)
 p2.add(entry_tm)
 p2.add(pwr_label)
+
 #p2.add(canv2)
 #p2.add(wtf)
 p3.add(sld_a)
@@ -143,6 +147,8 @@ p3.add(sld_b)
 p3.add(sld_c)
 p3.add(sld_d)
 p3.add(sld_e)
+
+#time_label.pack(side="left")
 
 entry_tm.insert(0, str(datetime.fromtimestamp(c.tm)))
 
@@ -166,22 +172,27 @@ for led in c.led_array:
 #     window.update_idletasks()
 #     window.update()
 #     time.sleep(0.1)
+for led in c.led_array:
+    led[3] = led[3]*0
 
+#p.random_canv(canv, window, pwr_label)
 
 #mainloop-structure:
 #--read and refresh user-param
 #--refresh variables (tm, theta, pln_array, led_array)
 #--refresh led-state
-#--limit led intensity
+#--limit led-state into ltd_array
 #--render leds
+
+
 
 frame = 0
 while True:
     if frame%1==0:
         start = datetime.utcnow()
-        state = list(lng.state())
-        state2 = list(lng2.state())
-        state3 = list(lng3.state())
+        ref = list(lng.state())
+        drw = list(lng2.state())
+        rt = list(lng3.state())
         c.a = np.float16(sld_a.get())
         c.b = np.float16(sld_b.get())
         c.c = np.float16(sld_c.get())
@@ -191,25 +202,34 @@ while True:
         #state = list(lng.state())
         window.update_idletasks()
         window.update()
+        lbl = [time_label, pwr_label, entry_tm]
+        p.terracentric(
+            canv,
+            window,
+            lbl,
+            ref,
+            drw,
+            rt
+        )
 
-        f.refresh(state[0], state[1], state[2])
+        #f.refresh(state[0], state[1], state[2])
 
-        if state3[0] == False:
-            try:
-                c.tm = datetime.timestamp(
-                    datetime.fromisoformat(entry_tm.get())
-                )
-            except: pass
+        # if state3[0] == False:
+        #     try:
+        #         c.tm = datetime.timestamp(
+        #             datetime.fromisoformat(entry_tm.get())
+        #         )
+        #     except: pass
 
-        if state2[0] == True:
-            f.get_led_state(state2[1], state2[2])
-        pwr_label['text'] = "pwr" + str((f.led_limiter(c.led_array, c.limit)))
-        if state[3]==True:
-            f.redraw_canvas(canv)
-        time_label['text'] = str(datetime.fromtimestamp(c.tm))
-        time_label2['text'] = str(c.tm)
+        # if state2[0] == True:
+        #     f.get_led_state(state2[1], state2[2])
+
+        # if state[3]==True:
+        #     f.redraw_canvas(canv, c.led_array)
+        # time_label['text'] = str(datetime.fromtimestamp(c.tm))
+        # time_label2['text'] = str(c.tm)
         #pwr_label['text'] = "pwr"+str((f.led_limiter(c.led_array, c.limit)))
         #print(state)
-        print(state, state2, state3, datetime.utcnow()-start)
+        #print(state, state2, state3, datetime.utcnow()-start)
     frame += 1
 

@@ -10,8 +10,10 @@ c = 0.5
 d = -0.1
 e = 1
 f = 360
+pwr = 0
+fac = 0
 limit = 5 #power limit in amps as for 20mA per color channel
-
+ltd_array = 0
 
 pln_array = np.array(
     [### pln        phi|phase |  g |  b |  a |

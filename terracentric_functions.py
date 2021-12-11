@@ -122,7 +122,24 @@ def led_limiter(led_array, lmt):
         fac=1
     return (pwr, fac)
 
-def redraw_canvas(canv):
+def get_ltd_array(led_array, lmt):
+    pwr_array = np.array((0, 0, 0), dtype="float32")
+    ltd_array = np.copy(led_array)
+    for led in led_array:
+        pwr_array += led[3] / 255 * 0.02
+    pwr = np.sum(pwr_array)
+    c.pwr = pwr
+    if pwr > lmt:
+        fac = lmt / pwr
+        for led, ltd_led in zip(led_array, ltd_array):
+            ltd_led[3] = led[3] * fac
+    else:
+        fac = 1
+    c.fac = fac
+    c.ltd_array = np.copy(ltd_array)
+    return ltd_array
+
+def redraw_canvas(canv, led_array):
 
     width = 800
     height = 800
@@ -131,7 +148,7 @@ def redraw_canvas(canv):
     sc = 30
     #get_led_state()
     canv.delete("all")
-    for led in c.led_array:
+    for led in led_array:
         x, y = pol2cart(led[4], led[1])
         create_circle((x * sc + offx), (-y * sc + offy), 8, canv, col=led[3])
 
