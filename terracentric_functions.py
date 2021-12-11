@@ -28,7 +28,7 @@ def get_sun_event(timestamp, event):
 
 def get_tm():
     st = datetime.utcnow()
-    c.tm = datetime.timestamp(st)
+    c.tm = datetime.timestamp(st) + c.dtm
     return
 
 
@@ -131,12 +131,18 @@ def get_ltd_array(led_array, lmt):
     c.pwr = pwr
     if pwr > lmt:
         fac = lmt / pwr
-        for led, ltd_led in zip(led_array, ltd_array):
-            ltd_led[3] = led[3] * fac
     else:
         fac = 1
+    for led, ltd_led in zip(led_array, ltd_array):
+        ltd_led[3] = led[3] * fac
+        #ltd_led[3] = np.ndarray(led[3] * fac, dtype="int")
+        #print(ltd_led[3])
     c.fac = fac
-    c.ltd_array = np.copy(ltd_array)
+    c.ltd_array = (np.copy(ltd_array))
+    #c.ltd_array = c.ltd_array[3].astype("int")
+    #print(c.ltd_array)
+    #c.ltd_array.astype(int)
+    #c.ltd_array = np.ndarray.astype(ltd_array, "int")
     return ltd_array
 
 def redraw_canvas(canv, led_array):

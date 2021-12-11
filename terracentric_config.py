@@ -3,6 +3,7 @@
 import numpy as np
 
 tm = 0
+dtm = 0
 theta = 0
 a = 0.2
 b = 2
@@ -54,7 +55,8 @@ led_array = np.zeros((n_LED*m_LED, 5), dtype=object)
 for m in range(m_LED):
     for n in range(n_LED):
         ind = n+m*n_LED
-        led_array[ind, 0] = "LED" + str(ind).zfill(4)
+        #led_array[ind, 0] = "LED" + str(ind).zfill(4)
+        led_array[ind, 0] = ind
         led_array[ind, 1] = np.float32(2*np.pi*(n/n_LED))
         #led_array[ind, 1] = np.float32(2*np.pi*((-n/n_LED)+1/4)%2*np.pi)
         led_array[ind, 2] = np.float32(1*(m/m_LED))

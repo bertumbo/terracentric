@@ -107,7 +107,7 @@ sld_e = tk.Scale(resolution=0.001, from_=0, to=1, orient="vertical", length=500)
 sld_f = tk.Scale(resolution=1, from_=0, to=360, orient="vertical", length=500)
 lng = Checkbar(window, ["r_tm", 'r_theta', 'r_pln_pos'])
 lng2 = Checkbar(window, ['r_led', 'drw_pln', 'drw_mrk'])
-lng3 = Checkbar(window, ['use_realtime'])
+lng3 = Checkbar(window, ['use_realtime', 'use_dtm'])
 
 sld_a.set(str(c.a))
 sld_b.set(str(c.b))
@@ -172,8 +172,8 @@ for led in c.led_array:
 #     window.update_idletasks()
 #     window.update()
 #     time.sleep(0.1)
-for led in c.led_array:
-    led[3] = led[3]*0
+# for led in c.led_array:
+#     led[3] = led[3]*0
 
 #p.random_canv(canv, window, pwr_label)
 
@@ -185,6 +185,7 @@ for led in c.led_array:
 #--render leds
 
 
+#p.snake(canv, window, pwr_label)
 
 frame = 0
 while True:
@@ -211,6 +212,11 @@ while True:
             drw,
             rt
         )
+    if frame%1==0:
+        if rt[1] == True:
+            c.dtm += 18000
+        else:
+            c.dtm = 0
 
         #f.refresh(state[0], state[1], state[2])
 
