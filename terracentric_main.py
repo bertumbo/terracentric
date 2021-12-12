@@ -6,6 +6,7 @@
 import terracentric_functions as f
 import terracentric_config as c
 import terracentric_programs as p
+import invisiball
 import tkinter as tk
 import numpy as np
 from datetime import datetime
@@ -186,6 +187,8 @@ for led in c.led_array:
 
 
 #p.snake(canv, window, pwr_label)
+
+p.invisiball(canv, window)
 
 frame = 0
 while True:

@@ -105,6 +105,7 @@ def get_led_state(drw_pln, drw_mrk):
                     val = v(phi_d_m, ((led[2]+mrk[2]) * d_now), s0)
                     sum_led += mrk[3] * val
 
+
         #led[3] = sum_led
         led[3] = np.clip(sum_led, 0, 255)
     return

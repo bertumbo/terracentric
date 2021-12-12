@@ -16,6 +16,8 @@ fac = 0
 limit = 5 #power limit in amps as for 20mA per color channel
 ltd_array = 0
 
+
+
 pln_array = np.array(
     [### pln        phi|phase |  g |  b |  a |
         ["sun",       0, 0, np.array((255, 212,  60))],
