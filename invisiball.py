@@ -24,6 +24,12 @@ class Ball:
         beta_in = arctan2(self.vec[1],self.vec[0])
         theta_in = arctan2(self.vec[1],self.vec[0])
 
+def rot(vec, ang):
+    r_mat = np.array(((cos(ang), -sin(ang),
+                       sin(ang),  cos(ang)
+                       )))
+    vec_n = np.dot(r_mat,np.copy(vec))
+    return vec_n
 
 def rotate(vec, ang):
     print("rotating\n")
@@ -97,18 +103,18 @@ def tang(vec, rho):
 # ])
 # print(test)
 # print(rotate(test,1/2*pi))
-m = array([
-    [7, 7], [2, 1], [0, 0]
-], dtype=float)
+# m = array([
+#     [7, 7], [2, 1], [0, 0]
+# ], dtype=float)
 #print(m)
 #o = (ortho(m))
 #i = intersect(o, array(10))
 # print(m, o, i, sep="\n")
 
-emil = Ball(m)
-emil.get_intersections()
-
-for intersection in emil.intersections:
-    print(intersection)
-    print(intersection[0])
+# emil = Ball(m)
+# emil.get_intersections()
+#
+# for intersection in emil.intersections:
+#     print(intersection)
+#     print(intersection[0])
 
