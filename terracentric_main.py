@@ -217,7 +217,7 @@ while True:
         )
     if frame%1==0:
         if rt[1] == True:
-            c.dtm += 18000
+            c.dtm += 1800
         else:
             c.dtm = 0
 

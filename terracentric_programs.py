@@ -1,6 +1,7 @@
 import terracentric_functions as f
 import terracentric_config as c
-from invisiball import Ball
+# from invisiball import Ball
+from matrix_stuff import Ball, calc_step
 from random import randint
 import numpy as np
 import time
@@ -10,31 +11,39 @@ def invisiball(
         canv,
         window
 ):
-    m = np.array([[1, 0], [1, 0], [0, 0]], dtype=float)
-    ball = Ball(m)
+    clr_m = np.array([255, 0, 0])
+    clr_n = np.array([0, 255, 0])
+    m = np.array([[[1, 0], [1, 1], [0, 0]]], dtype=float)
+    n = np.array([[[3, 3], [0, 1], [0, 1]]], dtype=float)
+    Ball(m, clr_m)
+    #Ball(n, clr_n)
+
+
 
     while True:
-        ball.get_intersections()
-        ball.get_heading()
+        for bal in Ball.instances:
+            bal.get_ortho_intersections()
+            bal.get_reflection()
 
-        c.led_array[:, 3] = c.led_array[:, 3] * 0
-        for led in c.led_array:
-            for sec in ball.intersections:
-                x1, y1 = sec[:]
-                x2, y2 = f.pol2cart(led[4], led[1])
-                dx = x1-x2
-                dy = y1-y2
-                rad = np.sqrt(dx**2 + dy**2)
-                if rad < 1:
-                    pass
-                    led[3] = np.array((255, 0, 0), dtype="float32")
+
+            c.led_array[:, 3] = c.led_array[:, 3] * 0
+            for led in c.led_array:
+                for sec in bal.intersections:
+                    x1, y1 = sec[:]
+                    x2, y2 = f.pol2cart(led[4], led[1])
+                    dx = x1-x2
+                    dy = y1-y2
+                    rad = np.sqrt(dx**2 + dy**2)
+                    if rad < 1:
+                        pass
+                        led[3] = bal.clr
 
         f.get_ltd_array(c.led_array, c.limit)
         f.redraw_canvas(canv, c.ltd_array)
         window.update_idletasks()
         window.update()
 
-        ball.calc_step()
+        bal.vec = calc_step(bal.vec, 0.1)
 
 def snake(
         canv,
