@@ -103,11 +103,6 @@ def get_led_state(drw_pln, drw_mrk):
 
         if drw_pln == True:
             for pln in c.pln_array:
-                # phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
-                # phi_d_m = min(phi_d, 2 * np.pi - phi_d)
-                # if phi_d_m < c.a:
-                #     d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
-                #     val = v(phi_d_m, ((led[2]+pln[2]) * d_now), s0)
                 val = get_val(pln[1] + c.theta,led[1], pln[2],led[2], s0)
                 if val != 0:
                     sum_led += pln[3] * val
