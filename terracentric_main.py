@@ -162,7 +162,7 @@ while True:
         window.update()
         lbl = [time_label, pwr_label, entry_tm]
         if mode[1] == True:
-            p.snake2(
+            p.rattlesnake(
                 canv,
                 window,
                 lbl

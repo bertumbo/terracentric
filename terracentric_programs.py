@@ -73,7 +73,7 @@ def snake(
         window.update()
         time.sleep(0.01)
 
-def snake2(
+def rattlesnake(
         canv,
         window,
         lbl):
@@ -88,15 +88,8 @@ def snake2(
         for led in c.led_array:
             sum_led = sum_led * 0
 
-            # for tsss in Snake.instances:
-            #     for snk in tsss.last_pos:
-            #         val = f.get_val(snk, led[1], 0, led[2], s0)
-            #         if val != 0:
-            #             sum_led += np.array([60,20,10])* val
-            # led[3] = np.clip(sum_led, 0, 255)
-
-            for tsss in Snake.instances:
-                for ind, seg in zip(range(len(tsss.segments)),tsss.segments):
+            for snake in Snake.instances:
+                for ind, seg in zip(range(len(snake.segments)),snake.segments):
                     dif = f.smallest_angle(seg[0], seg[1])
                     #print(seg[0], seg[1], dif, led[1])
                     if (f.smallest_angle(seg[0], led[1]) <= dif) and (f.smallest_angle(seg[1], led[1]) <= dif):
