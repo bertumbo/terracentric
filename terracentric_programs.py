@@ -160,3 +160,7 @@ def sample_program(
     lbl[0]['text'] = "dt: " + str(datetime.fromtimestamp(c.tm)) + "\ntm: " + str(c.tm)
     lbl[1]['text'] = "pwr: " + str(np.float16(c.pwr)) + "\nfac: " + str(np.float16(c.fac)) + "\nltd_pwr: " + str(
         np.float16(c.pwr * c.fac))
+
+
+
+

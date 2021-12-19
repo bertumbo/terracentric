@@ -123,7 +123,7 @@ def get_led_state(drw_pln, drw_mrk):
         led[3] = np.clip(sum_led, 0, 255)
     return
 
-def led_limiter(led_array, lmt):
+def led_limiter(led_array, lmt): #deprecated
     pwr_array = np.array((0,0,0), dtype="float32")
     for led in led_array:
         pwr_array += led[3]/255*0.02
