@@ -1,11 +1,11 @@
 install the following modules:
 
-numpy     #pip install numpy
+<b>numpy</b>     <br />pip install numpy
 
-astropy   #pip install astropy
+<b>astropy</b>   <br />pip install astropy
 
-astral    #pip install astral
+<b>astral</b>    <br />pip install astral
 
-tkinter   #pip install tk
+<b>tkinter</b>   <br />pip install tk
 
-jplephem  #pip install jplephem #this is not strictly needed by default, install if you want to use different epheremides than the astropy-builtin
+<b>jplephem</b>  <br />pip install jplephem <br />this is not strictly needed by default, install if you want to use different epheremides than the astropy-builtin
