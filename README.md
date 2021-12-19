@@ -8,7 +8,7 @@ you need to install the following modules:
   -tkinter
   
 # terracentric_main
-initialises gui, refreshes inputs, draws outputs, calls programms from terracentric_programs
+initialises gui, refreshes inputs, draws outputs, calls programs from terracentric_programs
 
 # terracentric_programs
 see def sample_program for structuring programs, led call functions etc
