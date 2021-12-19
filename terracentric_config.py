@@ -20,15 +20,15 @@ ltd_array = 0
 
 pln_array = np.array(
     [### pln        phi|phase |  g |  b |  a |
-        ["sun",       0, 0, np.array((255, 212,  60))],
-        ["moon",      0, 0, np.array((182, 182, 182))],
-        ["mercury",   0, 0, np.array((198, 153,  86))],
-        ["venus",     0, 0, np.array((255, 185, 185))],
-        ["mars",      0, 0, np.array((203,  50,  50))],
-        ["jupiter",   0, 0, np.array((212, 197, 157))],
-        ["saturn",    0, 0, np.array((255,   0,   0))],
-        ["uranus",    0, 0, np.array(( 81, 180, 255))],
-        ["neptune",   0, 0, np.array(( 43,  64, 255))],
+        ["sun",       0, 1, np.array((255, 212,  60))],
+        ["moon",      0, 1, np.array((182, 182, 182))],
+        ["mercury",   0, 1, np.array((198, 153,  86))],
+        ["venus",     0, 1, np.array((255, 185, 185))],
+        ["mars",      0, 1, np.array((203,  50,  50))],
+        ["jupiter",   0, 1, np.array((212, 197, 157))],
+        ["saturn",    0, 1, np.array((255,   0,   0))],
+        ["uranus",    0, 1, np.array(( 81, 180, 255))],
+        ["neptune",   0, 1, np.array(( 43,  64, 255))],
         #["notaplanet",0, 0, np.array(( 43,  64, 255))]
     ],
     dtype=object,
@@ -36,12 +36,13 @@ pln_array = np.array(
 
 mrk_array = np.array(
     [
-        ["sunrise", 0, 0, np.array((50,0,0))],
-        ["sunset", 0, 0, np.array((0,0,50))],
-        ["noon", 0, 0, np.array((50,50,50))],
+        ["sunrise", 0, 1, np.array((50,0,0))],
+        ["sunset", 0, 1, np.array((0,0,50))],
+        ["noon", 0, 1, np.array((50,50,50))],
     ],
     dtype=object
 )
+
 
 n_LED = 120
 m_LED = 3

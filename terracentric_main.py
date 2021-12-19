@@ -7,13 +7,14 @@ import terracentric_functions as f
 import terracentric_config as c
 import terracentric_programs as p
 import invisiball
+import rattlesnake
 import tkinter as tk
 import numpy as np
 from datetime import datetime
 import time
-import matplotlib
-from matplotlib.pyplot import Figure
-matplotlib.use('TkAgg')
+#import matplotlib
+#from matplotlib.pyplot import Figure
+#matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from random import randint
 
@@ -29,21 +30,6 @@ class Checkbar(tk.Frame):
    def state(self):
       return map((lambda var: var.get()), self.vars)
 
-class Plotwindow():
-    def __init__(self, masterframe, size):
-        (w,h)=size
-        inchsize=(w/25.4, h/25.4)
-        self.figure = Figure(inchsize)
-        self.axes = self.figure.add_subplot(111)
-        # create canvas as matplotlib drawing area
-        self.canvas = FigureCanvasTkAgg(self.figure, master=masterframe)
-        self.canvas.get_tk_widget().pack()
-    def plotxy(self, x, y):
-        self.axes.plot(x,y)
-        self.canvas.draw()
-    def clearplot(self):
-        self.axes.cla()
-        self.canvas.draw()
 
 f.refresh(
     r_tm=True,
@@ -74,26 +60,6 @@ p1.add(p3)
 p3.pack(side="left", anchor="s")
 #p2.pack(side="top", anchor="n")
 
-
-plot = Plotwindow(masterframe=wtf, size=(100,80))
-#
-#wtf.pack(side="left", anchor="n")
-
-# x = ((-1, -0.9, -0.5, -0.1, 0, 0.1, 0.9))
-# y =
-plot.plotxy(
-    (0,1,2,3,4,5),
-            (
-                (f.l(0, f.s(0))),
-                (f.l(1, f.s(1))),
-                (f.l(2, f.s(2))),
-                (f.l(3, f.s(3))),
-                (f.l(4, f.s(4))),
-                (f.l(5, f.s(5))),
-                 )
-            )
-
-
 entry_tm = tk.Entry()
 time_label = tk.Label(text="frame", height=3)
 #time_label2 = tk.Label(text="time")
@@ -109,6 +75,7 @@ sld_f = tk.Scale(resolution=1, from_=0, to=360, orient="vertical", length=500)
 lng = Checkbar(window, ["r_tm", 'r_theta', 'r_pln_pos'])
 lng2 = Checkbar(window, ['r_led', 'drw_pln', 'drw_mrk'])
 lng3 = Checkbar(window, ['use_realtime', 'use_dtm'])
+lng4 = Checkbar(window, ['terracentric', 'rattlesnake'])
 
 sld_a.set(str(c.a))
 sld_b.set(str(c.b))
@@ -136,6 +103,7 @@ canv.pack(side="right")
 p2.add(lng)
 p2.add(lng2)
 p2.add(lng3)
+p2.add(lng4)
 p2.add(time_label)
 #p2.add(time_label2)
 p2.add(entry_tm)
@@ -158,24 +126,6 @@ for led in c.led_array:
     f.create_circle((x*sc + offx), (-y*sc + offy), 8, canv, col=led[3])
 
 
-# c.led_array[:,3] = c.led_array[:,3]*0
-#
-# for ind in range(360):
-#     pass
-#     #
-#     if ind > 0:
-#         c.led_array[ind-1,3] = np.array((0,0,0), dtype="float32")
-#     c.led_array[ind,3] += np.array((255,0,0), dtype="float32")
-#     # c.led_array[: ,3] = np.array(0,0,0)
-#     # c.led_array[ind ,3] = np.array((255,0,0))
-#     #f.refresh(True, True, True)
-#     f.redraw_canvas(canv)
-#     window.update_idletasks()
-#     window.update()
-#     time.sleep(0.1)
-# for led in c.led_array:
-#     led[3] = led[3]*0
-
 #p.random_canv(canv, window, pwr_label)
 
 #mainloop-structure:
@@ -188,8 +138,11 @@ for led in c.led_array:
 
 #p.snake(canv, window, pwr_label)
 
-p.invisiball(canv, window)
-
+#p.invisiball(canv, window)
+#p.snake2(canv, window, pwr_label)
+rattlesnake.Snake()
+rattlesnake.Player()
+#Ball()
 frame = 0
 while True:
     if frame%1==0:
@@ -197,6 +150,7 @@ while True:
         ref = list(lng.state())
         drw = list(lng2.state())
         rt = list(lng3.state())
+        mode = list(lng4.state())
         c.a = np.float16(sld_a.get())
         c.b = np.float16(sld_b.get())
         c.c = np.float16(sld_c.get())
@@ -207,38 +161,26 @@ while True:
         window.update_idletasks()
         window.update()
         lbl = [time_label, pwr_label, entry_tm]
-        p.terracentric(
-            canv,
-            window,
-            lbl,
-            ref,
-            drw,
-            rt
-        )
+        if mode[1] == True:
+            p.snake2(
+                canv,
+                window,
+                lbl
+            )
+        if mode[0] == True:
+            p.terracentric(
+                canv,
+                window,
+                lbl,
+                ref,
+                drw,
+                rt
+            )
     if frame%1==0:
         if rt[1] == True:
             c.dtm += 1800
         else:
             c.dtm = 0
 
-        #f.refresh(state[0], state[1], state[2])
-
-        # if state3[0] == False:
-        #     try:
-        #         c.tm = datetime.timestamp(
-        #             datetime.fromisoformat(entry_tm.get())
-        #         )
-        #     except: pass
-
-        # if state2[0] == True:
-        #     f.get_led_state(state2[1], state2[2])
-
-        # if state[3]==True:
-        #     f.redraw_canvas(canv, c.led_array)
-        # time_label['text'] = str(datetime.fromtimestamp(c.tm))
-        # time_label2['text'] = str(c.tm)
-        #pwr_label['text'] = "pwr"+str((f.led_limiter(c.led_array, c.limit)))
-        #print(state)
-        #print(state, state2, state3, datetime.utcnow()-start)
     frame += 1
 

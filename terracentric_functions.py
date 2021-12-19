@@ -78,6 +78,20 @@ def refresh(r_tm, r_theta, r_pln_pos):
     if True:
         get_mrk_pos(timestamp=c.tm, mrk_array=c.mrk_array)
 
+def smallest_angle(phi1, phi2):
+    phi_d = ((phi1 - phi2) % (2 * np.pi))
+    phi_d_m = min(phi_d, 2 * np.pi - phi_d)
+    return phi_d_m
+
+def get_val(phi1, phi2, phase1, phase2, s0):
+    phi_d = ((phi1 - phi2) % (2 * np.pi))
+    phi_d_m = min(phi_d, 2 * np.pi - phi_d)
+    if phi_d_m < c.a:
+        d_now = (2 * c.d - np.pi) % (2 * np.pi) - np.pi
+        val = v(phi_d_m, ((phase1*phase2) * d_now), s0)
+    else:
+        val = 0
+    return val
 
 def get_led_state(drw_pln, drw_mrk):
     s0 = s(0)
@@ -89,20 +103,19 @@ def get_led_state(drw_pln, drw_mrk):
 
         if drw_pln == True:
             for pln in c.pln_array:
-                phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
-                phi_d_m = min(phi_d, 2 * np.pi - phi_d)
-                if phi_d_m < c.a:
-                    d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
-                    val = v(phi_d_m, ((led[2]+pln[2]) * d_now), s0)
+                # phi_d = ((pln[1] - led[1] + c.theta) % (2 * np.pi))
+                # phi_d_m = min(phi_d, 2 * np.pi - phi_d)
+                # if phi_d_m < c.a:
+                #     d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
+                #     val = v(phi_d_m, ((led[2]+pln[2]) * d_now), s0)
+                val = get_val(pln[1] + c.theta,led[1], pln[2],led[2], s0)
+                if val != 0:
                     sum_led += pln[3] * val
 
         if drw_mrk == True:
             for mrk in c.mrk_array:
-                phi_d = ((mrk[1] - led[1]) % (2 * np.pi))
-                phi_d_m = min(phi_d, 2 * np.pi - phi_d)
-                if phi_d_m < c.a:
-                    d_now = (2*c.d-np.pi) % (2*np.pi)-np.pi
-                    val = v(phi_d_m, ((led[2]+mrk[2]) * d_now), s0)
+                val = get_val(mrk[1], led[1], mrk[2], led[2], s0)
+                if val != 0:
                     sum_led += mrk[3] * val
 
 
@@ -168,6 +181,11 @@ def pol2cart(rho, phi):
     x = rho * np.cos(phi)
     y = rho * np.sin(phi)
     return(x, y)
+
+def smallestSignedAngleBetween(x, y):
+    a = (x - y) % (2*np.pi)
+    b = (y - x) % (2*np.pi)
+    return -a if a < b else b
 
 def ind2nm(ind, n_max):
     (m, n) = divmod(ind, n_max)

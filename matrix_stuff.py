@@ -10,6 +10,7 @@ class Ball:
         self.dist = radial_distance(self.vec)
         self.clr = clr
         self.ind = 0
+        self.cooldown = False
 
     def get_ortho_intersections(self):
         self.intersections = intersect(ortho(self.vec), 10)[self.ind]
@@ -18,8 +19,15 @@ class Ball:
         self.dist = radial_distance(self.vec)
         print(self.dist)
         for distance in self.dist:
-            if distance >= 10:
-                self.vec = reflect(self.vec)
+            if distance >= 11:
+                if self.cooldown == False:
+                    self.vec = reflect(self.vec)
+                    self.cooldown = True
+            else:
+                self.cooldown = False
+
+
+
 
         #self.vec = reflect(self.vec)
 
