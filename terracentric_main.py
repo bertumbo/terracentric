@@ -15,6 +15,7 @@ import tkinter as tk
 import numpy as np
 from datetime import datetime
 import time
+from PIL import ImageGrab
 
 class Checkbar(tk.Frame):
    def __init__(self, parent=None, picks=[], side='left', anchor='w'):
@@ -41,6 +42,17 @@ def refresh_input():
     c.d = np.float16(sld_d.get())
     c.e = np.float16(sld_e.get())
     c.f = np.float16(sld_f.get())
+
+
+
+def getter(widget):
+    x=window.winfo_rootx()+widget.winfo_x()
+    y=window.winfo_rooty()+widget.winfo_y()
+    #x1=x+widget.winfo_width()
+    x1 = x+width
+    #y1=y+widget.winfo_height()
+    y1 = y+height
+    ImageGrab.grab().crop((x,y,x1,y1)).save("output.bmp")
 
 #tkinter stuff, initialisation...
 
@@ -80,6 +92,7 @@ lng = Checkbar(window, ["r_tm", 'r_theta', 'r_pln_pos'])
 lng2 = Checkbar(window, ['r_led', 'drw_pln', 'drw_mrk'])
 lng3 = Checkbar(window, ['use_realtime', 'use_dtm'])
 lng4 = Checkbar(window, ['terracentric', 'rattlesnake'])
+button = tk.Button(master=window, text='save canvas as png', command= lambda: getter(canv))
 
 sld_a.set(str(c.a))
 sld_b.set(str(c.b))
@@ -97,6 +110,7 @@ p2.add(lng4)
 p2.add(time_label)
 p2.add(entry_tm)
 p2.add(pwr_label)
+p2.add(button)
 
 p3.add(sld_a)
 p3.add(sld_b)
