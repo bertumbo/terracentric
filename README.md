@@ -1,11 +1,7 @@
 # terracentric
 this will be a terracentric planetary clock
 
-you need to install the following modules:
-  -numpy
-  -astropy
-  -astral
-  -tkinter
+check REQUIRED_MODULES.md for required python modules
   
 # terracentric_main
 initialises gui, refreshes inputs, draws outputs, calls programs from terracentric_programs
