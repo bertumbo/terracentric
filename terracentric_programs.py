@@ -8,10 +8,32 @@ import numpy as np
 import time
 from datetime import datetime
 
-def invisiball(
+
+def terracentric(
         canv,
-        window
+        window,
+        lbl,
+        ref,
+        drw,
+        rt
 ):
+    f.refresh(ref[0], ref[1], ref[2])
+    if rt[0] == False:
+        try:
+            c.tm = datetime.timestamp(
+                             datetime.fromisoformat(lbl[2].get())
+                         )
+            f.calc_theta(c.tm)
+        except: pass
+    f.get_led_state(drw[1], drw[2])
+    f.get_ltd_array(c.led_array, c.limit)
+    f.redraw_canvas(canv, c.ltd_array)
+    lbl[0]['text'] = "dt: "+str(datetime.fromtimestamp(c.tm))+"\ntm: "+str(c.tm)
+    lbl[1]['text'] = "pwr: " + str(np.float16(c.pwr)) + "\nfac: " + str(np.float16(c.fac))+ "\nltd_pwr: " + str(np.float16(c.pwr * c.fac))
+    #window.update_idletasks()
+    #window.update()
+
+def invisiball_init():
     clr_m = np.array([255, 0, 0])
     clr_n = np.array([0, 255, 0])
     m = np.array([[[1, 3], [1, 4], [0, 0]]], dtype=float)
@@ -19,59 +41,42 @@ def invisiball(
     Ball(m, clr_m)
     Ball(n, clr_n)
 
-
-
-    while True:
-        c.led_array[:, 3] = c.led_array[:, 3] * 0
-        for bal in Ball.instances:
-            bal.get_ortho_intersections()
-            bal.get_reflection()
-
-
-
-            for led in c.led_array:
-                for sec in bal.intersections:
-                    x1, y1 = sec[:]
-                    x2, y2 = f.pol2cart(led[4], led[1])
-                    dx = x1-x2
-                    dy = y1-y2
-                    rad = np.sqrt(dx**2 + dy**2)
-                    if rad < 1:
-                        pass
-                        led[3] += bal.clr
-            bal.vec = calc_step(bal.vec, 0.1)
-        f.get_ltd_array(c.led_array, c.limit)
-        f.redraw_canvas(canv, c.ltd_array)
-        window.update_idletasks()
-        window.update()
-
-
-
-def snake(
+def invisiball(
         canv,
-        window,
-        label
+        window
 ):
-    c.led_array[:, 3] = c.led_array[:, 3] * 0
-    for ind in range(360):
-        pass
-        #
-        if ind > 0:
-            pass
-            #c.led_array[ind - 1, 3] = np.array((0, 0, 0), dtype="float32")
-        c.led_array[ind, 3] += np.array((255, 0, 0), dtype="float32")
-        # c.led_array[: ,3] = np.array(0,0,0)
-        # c.led_array[ind ,3] = np.array((255,0,0))
-        # f.refresh(True, True, True)
-        f.get_ltd_array(c.led_array, c.limit)
-        f.redraw_canvas(canv, c.ltd_array)
-        label['text'] = "pwr: " + str(np.float16(c.pwr)) \
-                        + "\nfac: " + str(np.float16(c.fac)) \
-                        + "\nltd_pwr: " + str(np.float16(c.pwr * c.fac))
+    def init():
 
-        window.update_idletasks()
-        window.update()
-        time.sleep(0.01)
+        clr_m = np.array([255, 0, 0])
+        clr_n = np.array([0, 255, 0])
+        m = np.array([[[1, 3], [1, 4], [0, 0]]], dtype=float)
+        n = np.array([[[0, 3], [1, 0.1], [0, 0]]], dtype=float)
+        Ball(m, clr_m)
+        Ball(n, clr_n)
+
+
+    #while True:
+    c.led_array[:, 3] = c.led_array[:, 3] * 0
+    for bal in Ball.instances:
+        bal.get_ortho_intersections()
+        bal.get_reflection()
+
+        for led in c.led_array:
+            for sec in bal.intersections:
+                x1, y1 = sec[:]
+                x2, y2 = f.pol2cart(led[4], led[1])
+                dx = x1-x2
+                dy = y1-y2
+                rad = np.sqrt(dx**2 + dy**2)
+                if rad < 1:
+                    pass
+                    led[3] += bal.clr
+        bal.vec = calc_step(bal.vec, 0.1)
+    f.get_ltd_array(c.led_array, c.limit)
+    f.redraw_canvas(canv, c.ltd_array)
+        #window.update_idletasks()
+        #window.update()
+
 
 def rattlesnake(
         canv,
@@ -131,30 +136,27 @@ def random_canv(
         label['text'] = "pwr: " + str(np.float16(c.pwr)) \
                             + "\nfac: " + str(np.float16(c.fac)) \
                             + "\nltd_pwr: " + str(np.float16(c.pwr * c.fac))
-        window.update_idletasks()
-        window.update()
+        #window.update_idletasks()
+        #window.update()
         time.sleep(0.01)
 
-def terracentric(
+def sample_program(
         canv,
         window,
-        lbl,
-        ref,
-        drw,
-        rt
-):
-    f.refresh(ref[0], ref[1], ref[2])
-    if rt[0] == False:
-        try:
-            c.tm = datetime.timestamp(
-                             datetime.fromisoformat(lbl[2].get())
-                         )
-            f.calc_theta(c.tm)
-        except: pass
-    f.get_led_state(drw[1], drw[2])
-    f.get_ltd_array(c.led_array, c.limit)
-    f.redraw_canvas(canv, c.ltd_array)
-    lbl[0]['text'] = "dt: "+str(datetime.fromtimestamp(c.tm))+"\ntm: "+str(c.tm)
-    lbl[1]['text'] = "pwr: " + str(np.float16(c.pwr)) + "\nfac: " + str(np.float16(c.fac))+ "\nltd_pwr: " + str(np.float16(c.pwr * c.fac))
-    window.update_idletasks()
-    window.update()
+        lbl):
+    #activates random led with random value
+
+    for led in c.led_array:
+        led[3] = led[3]*0       #wipes every led
+    index = randint(0, 359)
+    chosen_led = c.led_array[index] #selects one led from array by index
+    chosen_led[3] = np.array([255,0,0]) #changes rgb value of chosen led, [3] corresponds to color of led
+    other_index = f.nm2ind(n=115, m=2, n_max=120) #gets index from row = n and column = m
+    other_chosen_led = c.led_array[other_index]
+    other_chosen_led[3] = np.array([0,255,0])
+    f.get_ltd_array(c.led_array, c.limit) #manipulates led_array, so that maximum power never exceeds power limit
+    f.redraw_canvas(canv, c.ltd_array) #draws limited led array on gui's canvas
+
+    lbl[0]['text'] = "dt: " + str(datetime.fromtimestamp(c.tm)) + "\ntm: " + str(c.tm)
+    lbl[1]['text'] = "pwr: " + str(np.float16(c.pwr)) + "\nfac: " + str(np.float16(c.fac)) + "\nltd_pwr: " + str(
+        np.float16(c.pwr * c.fac))
