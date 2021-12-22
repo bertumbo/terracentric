@@ -19,7 +19,7 @@ ltd_array = 0
 
 
 pln_array = np.array(
-    [### pln        phi|phase |  g |  b |  a |
+    [### pln        phi|phase |  g |  b |  a |ble
         ["sun",       0, 1, np.array((255, 212,  60))],
         ["moon",      0, 1, np.array((182, 182, 182))],
         ["mercury",   0, 1, np.array((198, 153,  86))],
@@ -34,6 +34,8 @@ pln_array = np.array(
     dtype=object,
 )
 
+
+
 mrk_array = np.array(
     [
         ["sunrise", 0, 1, np.array((50,0,0))],
@@ -46,7 +48,7 @@ mrk_array = np.array(
 
 n_LED = 120
 m_LED = 3
-key = {0: 9.5, 1: 10, 2: 10.5}
+key = {0: 10, 1: 10.5, 2: 11}
 # n_LED = 8
 # m_LED = 1
 # key = {0: 1}

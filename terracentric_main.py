@@ -43,16 +43,27 @@ def refresh_input():
     c.e = np.float16(sld_e.get())
     c.f = np.float16(sld_f.get())
 
-
+def save_led_array(led_array):
+    #output = np.copy(led_array)
+    #output = np.delete(output, [0, 1, 2, 4], 1)
+    output = np.zeros(shape=(np.shape(led_array)[0], 3))
+    for output_led, led in zip(output, led_array):
+        rgb = led[3]
+        output_led[:] = rgb[:]
+    output = np.rint(output)
+    print(output)
+    np.savetxt("foo.csv", output, delimiter=",")
 
 def getter(widget):
-    x=window.winfo_rootx()+widget.winfo_x()
-    y=window.winfo_rooty()+widget.winfo_y()
-    #x1=x+widget.winfo_width()
-    x1 = x+width
-    #y1=y+widget.winfo_height()
-    y1 = y+height
-    ImageGrab.grab().crop((x,y,x1,y1)).save("output.bmp")
+    # x=window.winfo_rootx()+widget.winfo_x()
+    # y=window.winfo_rooty()+widget.winfo_y()
+    # #x1=x+widget.winfo_width()
+    # x1 = x+width
+    # #y1=y+widget.winfo_height()
+    # y1 = y+height
+    # ImageGrab.grab().crop((x,y,x1,y1)).save("output.bmp")
+    my_data = np.genfromtxt('foo.csv', delimiter=',')
+    print(my_data)
 
 #tkinter stuff, initialisation...
 
@@ -93,6 +104,7 @@ lng2 = Checkbar(window, ['r_led', 'drw_pln', 'drw_mrk'])
 lng3 = Checkbar(window, ['use_realtime', 'use_dtm'])
 lng4 = Checkbar(window, ['terracentric', 'rattlesnake'])
 button = tk.Button(master=window, text='save canvas as png', command= lambda: getter(canv))
+button2 = tk.Button(master=window, text='save ltd_array as csv', command= lambda: save_led_array(c.led_array))
 
 sld_a.set(str(c.a))
 sld_b.set(str(c.b))
@@ -111,6 +123,7 @@ p2.add(time_label)
 p2.add(entry_tm)
 p2.add(pwr_label)
 p2.add(button)
+p2.add(button2)
 
 p3.add(sld_a)
 p3.add(sld_b)
@@ -123,23 +136,20 @@ entry_tm.insert(0, str(datetime.fromtimestamp(c.tm)))
 
 lbl = [time_label, pwr_label, entry_tm]
 
-
-
-
-
 #p.invisiball(canv, window)
 #p.snake2(canv, window, pwr_label)
 
-#setup for programs
+'''=====================setup========================'''
 
-rattlesnake.Snake()
+rattlesnake.Snake2()
 rattlesnake.Player()
 p.invisiball_init()
 #Ball()
 frame = 0
+
 while True:
-    '''mainloop, i am using this to get '''
-    if frame%1==0:
+    '''==================mainloop==================='''
+    if frame%1==0:  #do every frame
         refresh_input()
         start = datetime.utcnow()
 
@@ -163,15 +173,15 @@ while True:
                 drw,
                 rt
             )
+            if rt[1] == True:
+                c.dtm += 1800
+            else:
+                c.dtm = 0
+
+
 
         window.update_idletasks()
         window.update()
-
-    if frame%1==0:
-        if rt[1] == True:
-            c.dtm += 1800
-        else:
-            c.dtm = 0
 
     frame += 1
 

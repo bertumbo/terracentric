@@ -12,6 +12,55 @@ from astral import LocationInfo
 import numpy as np
 import terracentric_config as c
 
+def init_blender(led_array):
+    mat_list = []
+    for led in led_array:
+        x, y = pol2cart(led[4], led[1])
+        bpy.ops.mesh.primitive_cube_add(size=2, enter_editmode=False, align='WORLD', location=(x, y, 0),
+                                        rotation=(0, 0, led[4]), scale=(0.2, 0.2, 0.2))
+
+        ob = bpy.context.active_object
+        ob.name = led[0]
+        ob_name = led[0]
+
+        mat_name = led[0]
+        #self.mat_name = mat_name
+
+        mat = bpy.data.materials.get(mat_name) or bpy.data.materials.new(name=mat_name)
+        mat.use_nodes = True
+        #self.mat = mat
+
+        try:
+            mat.node_tree.nodes.remove(
+                mat.node_tree.nodes.get('Principled BSDF'))  # title of the existing node when materials.new
+        except:
+            pass
+        mat_output = mat.node_tree.nodes.get('Material Output')
+        diffuse = mat.node_tree.nodes.new('ShaderNodeEmission')  # name of diffuse BSDF when added with shift+A
+
+        diffuse.inputs['Color'].default_value = (1, 0, 0, 1)  # last value alpha
+
+        # link diffuse shader to material
+        mat.node_tree.links.new(mat_output.inputs[0], diffuse.outputs[0])
+
+        # set activer material to your new material
+        bpy.context.object.active_material = mat
+
+def refresh_blender(self, led_array):
+    for led in led_array:
+        ob = bpy.data.objects.get(led[0])
+        mat = bpy.data.materials.get(led[0])
+
+        mat_output = mat.node_tree.nodes.get('Material Output')
+        diffuse = mat.node_tree.nodes.new('ShaderNodeEmission')  # name of diffuse BSDF when added with shift+A
+
+        diffuse.inputs['Color'].default_value = (255 / 255, 255 / 255, 255 / 255, 1)  # last value alpha
+        diffuse.inputs['Strength'].default_value = 15
+        # link diffuse shader to material
+        mat.node_tree.links.new(mat_output.inputs[0], diffuse.outputs[0])
+
+        # set activer material to your new material
+        bpy.context.object.active_material = mat
 
 def get_sun_event(timestamp, event):
     #city = LocationInfo("Ilmenau", "Germany", "Europe/Ilmenau", 50 + 41 / 60, 10 + 55 / 60)

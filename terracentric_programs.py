@@ -1,7 +1,7 @@
 import terracentric_functions as f
 import terracentric_config as c
 # from invisiball import Ball
-from rattlesnake import Snake, Player
+from rattlesnake import Snake2, Player
 from matrix_stuff import Ball, calc_step
 from random import randint
 import numpy as np
@@ -93,32 +93,48 @@ def rattlesnake(
         for led in c.led_array:
             sum_led = sum_led * 0
 
-            for snake in Snake.instances:
+            for snake in Snake2.instances:
+                #print(snake.segments)
                 for ind, seg in zip(range(len(snake.segments)),snake.segments):
                     dif = f.smallest_angle(seg[0], seg[1])
-                    #print(seg[0], seg[1], dif, led[1])
                     if (f.smallest_angle(seg[0], led[1]) <= dif) and (f.smallest_angle(seg[1], led[1]) <= dif):
-                        #if f.smallest_angle(seg[1], led[0]) <= dif:
-                        val = (1-1/(ind+1))**2
+                        val = 1/(ind+1)**2
                     else:
                         val = 0
                     #val = f.get_val(snk, led[1], 0, led[2], s0)
                     if val != 0:
-                        sum_led += np.array([60,20,50])* val
+                        #if seg[2] == True:
+                        if snake.activity == "red":
+                            sum_led += np.array([60,20,50])* val
+                        if snake.activity == "green":
+                            sum_led += np.array([0, 60, 10]) * val
+                        if snake.activity == "halfgreen":
+                            if ind == 0:
+                                sum_led += np.array([0, 60, 10]) * val
+                            else:
+                                sum_led += np.array([60, 60, 10]) * val
+                        # else:
+                        #     sum_led += np.array([0, 60, 10]) * val
             led[3] = np.clip(sum_led, 0, 255)
 
-        for snake in Snake.instances:
-            snake.new_pos()
+        for snake in Snake2.instances:
+            # if randint(0,100) > 80:
+            #     snake.active = True
+            # else:
+            #     snake.active = False
+            snake.calc_step()
 
+
+            lbl[0]['text'] = str(snake.timer)
         f.get_ltd_array(c.led_array, c.limit)
         f.redraw_canvas(canv, c.ltd_array)
 
 
-        lbl[0]['text'] = "dt: " + str(datetime.fromtimestamp(c.tm)) + "\ntm: " + str(c.tm)
+
         lbl[1]['text'] = "pwr: " + str(np.float16(c.pwr)) + "\nfac: " + str(np.float16(c.fac)) + "\nltd_pwr: " + str(np.float16(c.pwr * c.fac))
-        window.update_idletasks()
-        window.update()
-        time.sleep(0.01)
+        #window.update_idletasks()
+        #window.update()
+        #time.sleep(0.01)
 
 
 def random_canv(
