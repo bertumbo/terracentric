@@ -177,6 +177,153 @@ def sample_program(
     lbl[1]['text'] = "pwr: " + str(np.float16(c.pwr)) + "\nfac: " + str(np.float16(c.fac)) + "\nltd_pwr: " + str(
         np.float16(c.pwr * c.fac))
 
+def new_sample_program(
+        canv,
+        window,
+        led_obj
+):
+    for row in range(led_obj.rows):
+        for column in range(led_obj.columns):
+            #led_obj.wipe()
+            led_obj.led_raw_rgb_array[row, column] = 255, 200, 100
+            led_obj.get_output_rgb_array(safety_mode=True)
+            led_obj.print_to_canvas(canv)
+            window.update_idletasks()
+            window.update()
+            #time.sleep(1)
+
+def loading(
+        canv,
+        window,
+        led_obj
+):
+    led_obj.wipe()
+    for row in range(led_obj.rows):
+        led_obj.wipe()
+        for column in range(led_obj.columns):
+            # led_obj.wipe()
+            led_obj.led_raw_rgb_array[row, column] = 255, 200, 100
+
+        led_obj.get_output_rgb_array(safety_mode=False)
+        led_obj.print_to_canvas(canv)
+        window.update_idletasks()
+        window.update()
+            # time.sleep(1)
+
+def text(
+        canv,
+        window,
+        led_obj
+):
+    led_obj.wipe()
+    letter_dictionary = {}
+    letter_list = []
+    letter_dictionary["T"] = (255 * np.array([
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+    ]))
+    letter_dictionary["T"] = (255 * np.array([
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+    ]))
+    letter_list.append(255*np.array([
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+    ]))
+    letter_list.append(255 * np.array([
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+        [[0, 0, 0], [0, 0, 0], [1, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+        [[1, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+    ]))
+    letter_list.append(255 * np.array([
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+        [[1, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+        [[1, 0, 0], [0, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+    ]))
+    letter_list.append(255 * np.array([
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[0, 0, 0], [1, 0, 0], [0, 0, 0]],
+        [[1, 0, 0], [1, 0, 0], [1, 0, 0]],
+    ]))
+
+    letter_list.append(np.array((0, 0, 255))*np.array(([
+        [[1], [1], [1]],
+        [[1], [1], [1]],
+        [[0], [1], [0]],
+
+    ])))
+    letter_dictionary["T"] = (np.array((0, 0, 255))*np.array(([
+        [[0], [1], [0]],
+        [[0], [1], [0]],
+        [[0], [1], [0]],
+        [[0], [1], [0]],
+        [[1], [1], [1]],
+    ])))
+    letter_dictionary["Y"] = (np.array((0, 0, 255)) * np.array(([
+        [[0], [1], [0]],
+        [[0], [1], [0]],
+        [[1], [1], [1]],
+        [[1], [0], [1]],
+        [[1], [0], [1]],
+    ])))
 
 
+    letter_list.append(letter_dictionary["T"])
+    letter_list.append(letter_dictionary["Y"])
+
+    for ind_letter, letter in enumerate(letter_list):
+        for row in range(letter.shape[0]):
+            for column in range(letter.shape[1]):
+                led_obj.led_raw_rgb_array[row + 6 * ind_letter, column] = letter[row, column]
+
+
+    led_obj.get_output_rgb_array(safety_mode=False)
+    led_obj.print_to_canvas(canv)
+    window.update_idletasks()
+    window.update()
+            # time.sleep(1)
+
+def text2(
+        canv,
+        window,
+        led_obj
+):
+    led_obj.wipe()
+    import terracentric_cryptix as cr
+
+    char0 = cr.generate_letter_list("terracentric")
+
+    offset_row = 0
+    offset_column = 0
+
+    for i in range(100):
+        led_obj.wipe()
+
+        text_array = cr.generate_array_from_letter_list(char0, i % 100)
+        n_rows = text_array.shape[0]
+        for row in range(n_rows):
+            for column in range(text_array.shape[1]):
+                led_obj.led_raw_rgb_array[(row + offset_row - int((n_rows - 1) / 2)) % led_obj.rows, (column + offset_column) % led_obj.columns] \
+                    = text_array[row, column]
+
+        led_obj.get_output_rgb_array(safety_mode=False)
+        led_obj.print_to_canvas(canv)
+        window.update_idletasks()
+        window.update()
+        time.sleep(0.01)
 

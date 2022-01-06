@@ -9,6 +9,7 @@ __version__ = "0.1"
 import terracentric_functions as f  #common functions of terracentric clock
 import terracentric_config as c     #configuration of terracentric clock
 import terracentric_programs as p   #programs
+import terracentric_main_v2 as f2
 import invisiball
 import rattlesnake
 import tkinter as tk
@@ -71,8 +72,8 @@ window = tk.Tk()
 wtf = tk.Frame()
 window.title("terracentric gui ;)")
 
-width = 800
-height = 800
+width = 1024
+height = 1024
 offx = width/2
 offy = height/2
 sc = 30
@@ -141,29 +142,44 @@ lbl = [time_label, pwr_label, entry_tm]
 
 '''=====================setup========================'''
 
-rattlesnake.Snake2()
-rattlesnake.Player()
-p.invisiball_init()
+#rattlesnake.Snake2()
+#rattlesnake.Player()
+#p.invisiball_init()
 #Ball()
-frame = 0
 
+led_array_new = f2.LED_Array()
+
+
+frame = 0
 while True:
     '''==================mainloop==================='''
     if frame%1==0:  #do every frame
+        led_array_new.print()
         refresh_input()
         start = datetime.utcnow()
 
-        p.sample_program(canv, window, lbl)
+        #p.sample_program(canv, window, lbl)
         # p.invisiball(
         #     canv,
         #     window
         # )
+
+        led_array_new.wipe()
+        led_array_new.led_raw_rgb_array[1, 1] = 600, 122, 100
+        led_array_new.led_raw_rgb_array[:, 1] = 500, 122, 300
+        led_array_new.led_raw_rgb_array[1, :] = 0, 400, 400
+        led_array_new.print_to_canvas(canv)
+        led_array_new.get_output_rgb_array()
+
+
         if mode[1] == True:
-            p.rattlesnake(
-                canv,
-                window,
-                lbl
-            )
+            # p.rattlesnake(
+            #     canv,
+            #     window,
+            #     lbl
+            # )
+            p.text2(canv, window, led_array_new)
+            #quit()
         if mode[0] == True:
             p.terracentric(
                 canv,
@@ -174,7 +190,7 @@ while True:
                 rt
             )
             if rt[1] == True:
-                c.dtm += 1800
+                c.dtm += 60*60*24
             else:
                 c.dtm = 0
 
