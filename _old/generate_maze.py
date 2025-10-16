@@ -1,7 +1,7 @@
 import numpy as np
 
 rows = n = 3
-columns = m = 60
+columns = m = 120
 
 # Create a zeros array
 arr = np.zeros((n, m), dtype=object)
@@ -47,7 +47,7 @@ while np.any(arr == 0):
                 arr[row, col] = "right"
             break  # Move to the next iteration of the while loop
 
-np.set_printoptions(linewidth=250)
+np.set_printoptions(linewidth=500)
 
 #print(arr)
 
@@ -62,4 +62,5 @@ for row in range(rows):
         except:
             print(1, end=" ")
     print()
+
 
